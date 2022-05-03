@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container div {
+            width: 700px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .container div input {
+            margin-right: 0;
+            font-family: '宋体', serif;
+            width: 300px;
+            height: 50px;
+            font-size: 30px;
+            padding-left: 10px;
+        }
+
+        .container div span {
+            font-family: '宋体', serif;
+            font-size: 40px;
+            margin-left: 0;
+        }
+
+        #title {
+            font-family: '宋体', serif;
+            font-size: 80px;
+            margin-bottom: 60px;
+            color: #bfa;
+        }
+
+        #apply {
+            color: red;
+            width: 80px;
+            height: 40px;
+            cursor: pointer;
+            margin-top: 30px;
+            font-size: 25px;
+        }
+    </style>
+
+    <script>
+        function buttonOnClick() {
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let name = $('#name').val();
+            let comment = $('#comment').val();
+            if (username === "") {
+                alert('NetID不能为空');
+            } else if (password === "") {
+                alert('密码不能为空');
+            } else if (name === "") {
+                alert("姓名不能为空");
+            } else if (comment === "") {
+                alert("必须要有备注");
+            }
+            let formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            formData.append('name', name);
+            formData.append('comment', comment);
+            $.ajax({
+                url: '/mrwow/index/apply',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function () {
+                    alert('数据已提交，请等待审核通过')
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <span id="title">中山大学自动健康申报</span>
+    <div><span>请输入NetID：</span><input type="text" id="username"></div>
+    <div><span>请输入密码：</span><input type="text" id="password"></div>
+    <div><span>请输入真实姓名：</span><input type="text" id="name"></div>
+    <div><span>备注：</span><input type="text" id="comment"></div>
+    <input id="apply" type="button" onclick="buttonOnClick()" value="申请">
+</div>
+
+</body>
+</html>

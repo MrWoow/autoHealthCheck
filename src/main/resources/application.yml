@@ -1,0 +1,30 @@
+server:
+    port: 1001
+    servlet:
+        context-path: /mrwow/
+        encoding:
+            enabled: true
+            force: true
+            charset: utf-8
+
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/autoHealthCheck?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+        username: root
+        password: wanghao123
+    thymeleaf:
+        prefix: classpath:/templates/
+        suffix: .html
+        cache: false
+        check-template-location: true
+        mode: HTML5
+        encoding: utf-8
+    servlet:
+        multipart:
+            max-file-size: -1
+            max-request-size: -1
+            location: /
+            enabled: true
+#  mvc:
+#    static-path-pattern: /static/**
