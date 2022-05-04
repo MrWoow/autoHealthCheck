@@ -1,6 +1,5 @@
 package priv.mrwow.main.ServiceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import priv.mrwow.main.Service.IndexService;
 import priv.mrwow.main.mapper.ApplyMapper;
@@ -34,18 +33,18 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public String applyInfo(String username, String password, String name, String comment) {
+    public User applyInfo(String username, String password, String name, String comment) {
         Apply apply = new Apply();
         apply.setUsername(username);
         apply.setPassword(password);
         apply.setName(name);
         apply.setComment(comment);
         applyMapper.insertSelective(apply);
-        return null;
+        return new User();
     }
 
     @Override
-    public String admitOneUser(int id) {
+    public User admitOneUser(int id) {
         Apply apply = applyMapper.selectByPrimaryKey(id);
         User user = new User();
         user.setUsername(apply.getUsername());
@@ -53,12 +52,12 @@ public class IndexServiceImpl implements IndexService {
         user.setName(apply.getName());
         userMapper.insertSelective(user);
         applyMapper.deleteByPrimaryKey(id);
-        return null;
+        return new User();
     }
 
     @Override
-    public String rejectOneUser(int id) {
+    public User rejectOneUser(int id) {
         applyMapper.deleteByPrimaryKey(id);
-        return null;
+        return new User();
     }
 }

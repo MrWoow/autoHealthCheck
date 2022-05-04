@@ -1,6 +1,7 @@
 package priv.mrwow.main.Service;
 
 import priv.mrwow.main.model.PO.Apply;
+import priv.mrwow.main.model.PO.User;
 
 import java.util.List;
 
@@ -11,9 +12,9 @@ import java.util.List;
 public interface IndexService {
     List<Apply> getAllApplyList();
 
-    String applyInfo(String username, String password, String name, String comment);
+    User applyInfo(String username, String password, String name, String comment);
 
-    String admitOneUser(int id);
+    User admitOneUser(int id);
 
-    String rejectOneUser(int id);
+    User rejectOneUser(int id);
 }

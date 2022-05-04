@@ -6,7 +6,7 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 
     <style>
-        body html {
+        body, html {
             border: 0;
             margin: 0;
             padding: 0;
@@ -16,7 +16,7 @@
             overflow-y: scroll;
         }
 
-        .container {
+        #container {
             border: 0;
             margin: 0;
             width: 100vw;
@@ -28,10 +28,11 @@
             align-items: center;
             justify-content: center;
             padding: 50px 0 0;
+            box-sizing: border-box;
         }
 
-        .container div {
-            width: 400px;
+        #container div {
+            width: 600px;
             height: 60px;
             margin-bottom: 30px;
             display: flex;
@@ -39,18 +40,19 @@
             justify-content: space-between;
         }
 
-        .container div span {
+        #container div span {
             font-size: 25px;
             width: 80px;
             line-height: 60px;
             font-family: '宋体', serif;
         }
 
-        .container div button {
-            width: 55px;
-            height: 30px;
+        #container div button {
+            width: 70px;
+            height: 40px;
             font-family: '宋体', serif;
-            font-size: 25px;
+            font-size: 20px;
+            cursor: pointer;
         }
     </style>
 
@@ -66,7 +68,7 @@
                 window.close()
             }
             $.ajax({
-                url: '/mrwow/getAllApply',
+                url: '/mrwow/auto/getAllApply',
                 success: function (result) {
                     for (let apply of result) {
                         let aDiv = $('<div>');
@@ -76,14 +78,14 @@
                         let rejectButton = $('<button>');
                         name.html(apply.name);
                         comment.html(apply.comment);
-                        admitButton.val('同意');
+                        admitButton.html('同意');
                         admitButton.click(function () {
                             $.ajax({
-                                url: "/mrwow/admit",
+                                url: "/mrwow/auto/admit",
                                 data: {
                                     'id': apply.id
                                 },
-                                success: function () {
+                                success: function (result) {
                                     aDiv.remove();
                                     alert('成功');
                                 },
@@ -92,11 +94,11 @@
                         rejectButton.html('拒绝');
                         rejectButton.click(function () {
                             $.ajax({
-                                url: "/mrwow/reject",
+                                url: "/mrwow/auto/reject",
                                 data: {
                                     'id': apply.id
                                 },
-                                success: function () {
+                                success: function (result) {
                                     aDiv.remove();
                                     alert('成功');
                                 },

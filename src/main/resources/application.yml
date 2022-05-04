@@ -12,7 +12,7 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
         url: jdbc:mysql://localhost:3306/autoHealthCheck?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
         username: root
-        password: wanghao123
+        password: hu8KVqjGwZGgPTDz2k7f-
     thymeleaf:
         prefix: classpath:/templates/
         suffix: .html
@@ -26,5 +26,3 @@ spring:
             max-request-size: -1
             location: /
             enabled: true
-#  mvc:
-#    static-path-pattern: /static/**
