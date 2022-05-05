@@ -21,12 +21,11 @@ import priv.mrwow.main.model.example.UserExample;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.sql.Driver;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,9 +42,11 @@ public class ScheduleTask {
     }
 
     @Scheduled(cron = "0 0 8 * * ?")
+    @Retryable(value = Exception.class, maxAttempts = 5, backoff = @Backoff(delay = 2000, multiplier = 1.1))
     public void configureTasks() throws IOException, InterruptedException {
         List<User> users = userMapper.selectByExample(new UserExample());
         System.setProperty("webdriver.gecko.driver", "/home/geckodriver");
+        System.setProperty("webdriver.firefox.bin", "/home/firefox/firefox");
         FirefoxOptions options = new FirefoxOptions();
         options.setHeadless(true);
         for (User user : users) {
@@ -53,6 +54,31 @@ public class ScheduleTask {
             login(user, driver);
             declare(driver);
             driver.quit();
+            writeToFile(user);
+        }
+    }
+
+    @Retryable(value = Exception.class, maxAttempts = 5, backoff = @Backoff(delay = 2000, multiplier = 1.1))
+    private void writeToFile(User user) {
+        FileWriter fw = null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            //如果文件存在，则追加内容；如果文件不存在，则创建文件
+            File f = new File("/mrwow/on_20220503_autoHealthCheck/information.txt");
+            fw = new FileWriter(f, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert fw != null;
+        PrintWriter pw = new PrintWriter(fw);
+        pw.println("时间: " + simpleDateFormat.format(new Date()) + "\t用户: " + user.getName());
+        pw.flush();
+        try {
+            fw.flush();
+            pw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -69,22 +95,27 @@ public class ScheduleTask {
     }
 
     @Retryable(value = Exception.class, maxAttempts = 5, backoff = @Backoff(delay = 2000, multiplier = 1.1))
-    public void login(User user, WebDriver driver) throws IOException {
+    public void login(User user, WebDriver driver) throws IOException, InterruptedException {
         driver.get("https://cas.sysu.edu.cn/cas/login");
+        if (isElementExisting(driver, By.xpath("//*[@id=\"root\"]/span/div/div[2]/div[1]/div/div[1]/div[2]/div/div/div/button"))) {
+            driver.findElement(By.xpath("//*[@id=\"root\"]/span/div/div[2]/div[1]/div/div[1]/div[2]/div/div/div/button")).click();
+        }
         driver.findElement(By.id("username")).sendKeys(user.getUsername());
         driver.findElement(By.id("password")).sendKeys(user.getPassword());
         File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         WebElement element = driver.findElement(By.id("captchaImg"));
         Rectangle rect = element.getRect();
         BufferedImage subImage = ImageIO.read(src).getSubimage(rect.x, rect.y, rect.getWidth(), rect.height);
-        String imgPath = "/mrwow/autoHealthCheck/code.png";
+        String imgPath = "/mrwow/on_20220503_autoHealthCheck/code.png";
         File verificationCodeImg = new File(imgPath);
         ImageIO.write(subImage, "png", verificationCodeImg);
         String verificationCode = identifyCode(imgPath);
         driver.findElement(By.id("captcha")).sendKeys(verificationCode);
-        driver.findElement(By.xpath("//input[@class=\"btn btn-submit btn-block\"]")).click();
-        //driver.findElement(By.xpath("//*[@id=\"global-header-unread\"]")).getText();
-        //driver.findElement(By.xpath("//span[contains(text(), \"登 录\")]/..")).click();
+        driver.findElement(By.xpath("//*[@id=\"fm1\"]/section[2]/input[4]")).click();
+        Thread.sleep(3000);
+        if (isElementExisting(driver, By.xpath("//*[@id=\"fm1\"]/div[@class=\"alert alert-danger\"]"))) {
+            login(user, driver);
+        }
     }
 
     public String identifyCode(String imgPath) throws IOException {
@@ -103,6 +134,18 @@ public class ScheduleTask {
             return jsonObject.getJSONObject("data").getString("result");
         } else {
             return null;
+        }
+    }
+
+    /**
+     * 判断某个元素是否存在
+     */
+    public boolean isElementExisting(WebDriver webDriver, By by) {
+        try {
+            webDriver.findElement(by);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

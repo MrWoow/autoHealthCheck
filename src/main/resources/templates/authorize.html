@@ -67,51 +67,53 @@
                 window.open('', '_self');
                 window.close()
             }
-            $.ajax({
-                url: '/mrwow/auto/getAllApply',
-                success: function (result) {
-                    for (let apply of result) {
-                        let aDiv = $('<div>');
-                        let name = $('<span>');
-                        let comment = $('<span>');
-                        let admitButton = $('<button>');
-                        let rejectButton = $('<button>');
-                        name.html(apply.name);
-                        comment.html(apply.comment);
-                        admitButton.html('同意');
-                        admitButton.click(function () {
-                            $.ajax({
-                                url: "/mrwow/auto/admit",
-                                data: {
-                                    'id': apply.id
-                                },
-                                success: function (result) {
-                                    aDiv.remove();
-                                    alert('成功');
-                                },
-                            })
-                        });
-                        rejectButton.html('拒绝');
-                        rejectButton.click(function () {
-                            $.ajax({
-                                url: "/mrwow/auto/reject",
-                                data: {
-                                    'id': apply.id
-                                },
-                                success: function (result) {
-                                    aDiv.remove();
-                                    alert('成功');
-                                },
-                            })
-                        });
-                        aDiv.append(name);
-                        aDiv.append(comment);
-                        aDiv.append(admitButton);
-                        aDiv.append(rejectButton);
-                        $('#container').append(aDiv);
-                    }
-                },
-            });
+            if (isMe === 'root') {
+                $.ajax({
+                    url: '/mrwow/auto/getAllApply',
+                    success: function (result) {
+                        for (let apply of result) {
+                            let aDiv = $('<div>');
+                            let name = $('<span>');
+                            let comment = $('<span>');
+                            let admitButton = $('<button>');
+                            let rejectButton = $('<button>');
+                            name.html(apply.name);
+                            comment.html(apply.comment);
+                            admitButton.html('同意');
+                            admitButton.click(function () {
+                                $.ajax({
+                                    url: "/mrwow/auto/admit",
+                                    data: {
+                                        'id': apply.id
+                                    },
+                                    success: function (result) {
+                                        aDiv.remove();
+                                        alert('成功');
+                                    },
+                                })
+                            });
+                            rejectButton.html('拒绝');
+                            rejectButton.click(function () {
+                                $.ajax({
+                                    url: "/mrwow/auto/reject",
+                                    data: {
+                                        'id': apply.id
+                                    },
+                                    success: function (result) {
+                                        aDiv.remove();
+                                        alert('成功');
+                                    },
+                                })
+                            });
+                            aDiv.append(name);
+                            aDiv.append(comment);
+                            aDiv.append(admitButton);
+                            aDiv.append(rejectButton);
+                            $('#container').append(aDiv);
+                        }
+                    },
+                });
+            }
         }
     </script>
 
