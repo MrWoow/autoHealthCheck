@@ -56,6 +56,24 @@ public class ScheduleTask {
             driver.quit();
             writeToFile(user);
         }
+        FileWriter fw = null;
+        try {
+            File f = new File("/mrwow/on_20220503_autoHealthCheck/information.txt");
+            fw = new FileWriter(f, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert fw != null;
+        PrintWriter pw = new PrintWriter(fw);
+        pw.print("\n");
+        pw.flush();
+        try {
+            fw.flush();
+            pw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Retryable(value = Exception.class, maxAttempts = 5, backoff = @Backoff(delay = 2000, multiplier = 1.1))
