@@ -5,25 +5,24 @@ import org.jsoup.Jsoup;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import priv.mrwow.main.Service.IndexService;
 import priv.mrwow.main.mapper.UserMapper;
 import priv.mrwow.main.model.PO.User;
 import priv.mrwow.main.model.example.UserExample;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.sql.Driver;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -65,7 +64,7 @@ public class ScheduleTask {
         }
         assert fw != null;
         PrintWriter pw = new PrintWriter(fw);
-        pw.print("\n");
+        pw.print("\n\n");
         pw.flush();
         try {
             fw.flush();
@@ -110,6 +109,10 @@ public class ScheduleTask {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@id=\"form_command_bar\"]/li[@class=\"command_button\"]/a")));
         Thread.sleep(3000);
         driver.findElement(By.xpath("//ul[@id=\"form_command_bar\"]/li[@class=\"command_button\"]/a")).click();
+        Thread.sleep(3000);
+        if (!isElementExisting(driver, By.xpath("//div[@class=\"dialog display\"]"))) {
+            declare(driver);
+        }
     }
 
     @Retryable(value = Exception.class, maxAttempts = 5, backoff = @Backoff(delay = 2000, multiplier = 1.1))

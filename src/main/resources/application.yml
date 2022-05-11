@@ -18,7 +18,7 @@ spring:
         suffix: .html
         cache: false
         check-template-location: true
-        mode: HTML5
+        mode: HTML
         encoding: utf-8
     servlet:
         multipart:
